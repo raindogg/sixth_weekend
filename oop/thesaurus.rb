@@ -35,14 +35,14 @@ class Thesaurus
 
   def add_word(word)
     @entries << Entry.new(word)
-    puts "#{word["word"]} added!"
+    "#{word['word']} added!"
   end
 
   def delete_word(word)
     entry = find_word(word)
     if !entry.nil?
-      puts "#{entry.word} deleted."
       @entries.delete(entry)
+      "#{entry.word} deleted."
     else
       "That word is not in the thesaurus."
     end
@@ -51,18 +51,18 @@ class Thesaurus
   def synonyms(word)
     entry = find_word(word)
     if !entry.nil?
-      puts entry.synonym
+      entry.synonym
     else
-      puts "#{word} is not in the thesaurus."
+      "#{word} is not in the thesaurus."
     end
   end
 
   def antonyms(word)
     entry = find_word(word)
     if !entry.nil?
-      puts entry.antonym
+      entry.antonym
     else
-      puts "#{word} is not in the thesaurus."
+      "#{word} is not in the thesaurus."
     end
   end
 
@@ -72,7 +72,7 @@ class Thesaurus
       entry.synonym << synonym
       entry.synonym
     else
-      puts "#{word} is not in the thesaurus."
+      "#{word} is not in the thesaurus."
     end
   end
 
@@ -82,7 +82,7 @@ class Thesaurus
       entry.antonym << antonym
       entry.antonym
     else
-      puts "#{word} is not in the thesaurus."
+      "#{word} is not in the thesaurus."
     end
   end
 end
@@ -96,36 +96,72 @@ class Entry
   end
 end
 
-test = Thesaurus.new
-test.add_word({"word" => "good", "synonym" => ["excellent", "wonderful"], "antonym" => ["bad", "horrible"]})
-test.add_word({"word" => "bad", "synonym" => ["horrible"], "antonym" => ["good"]})
+RSpec.describe Thesaurus do
+  let(:thesaurus) { Thesaurus.new }
 
-# thesaurus.add_word({"word" => "good", "synonym" => ["excellent", "wonderful"], "antonym" => ["bad", "horrible"]})
-# thesaurus.add_word({"word" => "bad", "synonym" => ["horrible"], "antonym" => ["good"]})
-# p thesaurus.entries
-# p "*****************"
+  describe 'add_word' do
+    it "should add a word to the thesaurus and return the name of the word added." do
+      expect(thesaurus.add_word({"word" => "good", "synonym" => ["excellent", "wonderful"], "antonym" => ["bad", "horrible"]})).to eq("good added!")
+    end
+  end
 
-# thesaurus.delete_word("bad")
-# p "*********************"
-# p thesaurus.entries
-# p "***********************"
-# thesaurus.synonyms("good")
+  describe 'add_word' do
+    it "should add a word to the thesaurus and return the name of the word added." do
+      expect(thesaurus.add_word({"word" => "bad", "synonym" => ["horrible"], "antonym" => ["good"]})).to eq("bad added!")
+    end
+  end
 
-# thesaurus.synonyms("fish")
+  describe 'delete_word' do
+    it "should delete a word from the thesaurus and return the name of the deleted word." do
+      expect(thesaurus.delete_word("bad")).to eq("bad deleted.")
+    end
+  end
 
-# p '************************'
+  describe 'synonyms' do
+    it "should return all the synonyms of that word." do
+      expect(thesaurus.synonyms("good")).to eq(['excellent', 'wonderful'])
+    end
+  end
 
-# thesaurus.antonyms("good")
-# thesaurus.antonyms("fish")
+  describe 'synonyms' do
+    it "should return word is not in the thesaurus if given a word not in the thesaurus." do
+      expect(thesaurus.synonyms("fish")).to eq("fish is not in the thesaurus.")
+    end
+  end
 
-# p "***********************"
+  describe 'antonyms' do
+    it "should return all of the antonyms for a word." do
+      expect(thesaurus.antonyms("good")).to eq(['bad', 'horrible'])
+    end
+  end
 
-# thesaurus.add_synonym("good", "fantastic")
-# thesaurus.add_synonym("fish", "amphibious")
-# thesaurus.synonyms("good")
+  describe 'antonyms' do
+    it "should return word is not in the thesaurus if given a word not in the thesaurus." do
+      expect(thesaurus.antonyms("fish")).to eq("fish is not in the thesaurus.")
+    end
+  end
 
-# p "**********************"
+  describe 'add_synonym' do
+    it "should add a synonym to the entry for a specific word and return all the synonyms. ," do
+      expect(thesaurus.add_synonym("good", "fantastic")).to eq(['excellent', 'wonderful', 'fantastic'])
+    end
+  end
 
-# thesaurus.add_antonym("good", "miserable")
-# thesaurus.add_antonym("fish", "land animal")
-# thesaurus.antonyms("good")
+  describe 'add_synonym' do
+    it "should return word is not in the thesaurus if the word is not in the thesaurus." do
+      expect(thesaurus.add_synonym("fish", "amphibious")).to eq("fish is not in the thesaurus.")
+    end
+  end
+
+  describe 'add_antonym' do
+    it "should add a antonym to the entry for a specific word and return all the antonyms. ," do
+      expect(thesaurus.add_antonym("good", "miserable")).to eq(['bad', 'horrible', 'miserable'])
+    end
+  end
+
+  describe 'add_antonym' do
+    it "should return word is not in the thesaurus if the word is not in the thesaurus." do
+      expect(thesaurus.add_antonym("fish", "land animal")).to eq("fish is not in the thesaurus.")
+    end
+  end
+end
